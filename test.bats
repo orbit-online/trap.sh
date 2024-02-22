@@ -40,7 +40,17 @@ setup_file() {
   trap_append \"echo 'USR2 signal received'\" USR2
   trap_remove \$p
   trap_append \"echo 'last command'\" USR2
-  kill -s USR2 \$\$
+  kill -s USR2 \$BASHPID
   ")" 'USR2 signal received
 last command'
+}
+
+@test 'subshells are isolated' {
+  assert_equal "$(bash -ec "source $BATS_TEST_DIRNAME/trap.sh
+  trap_append \"echo 'should not run'\" USR2
+  (
+    trap_append \"echo 'USR2 signal received'\" USR2
+    kill -s USR2 \$BASHPID
+  )
+  ")" 'USR2 signal received'
 }
