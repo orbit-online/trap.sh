@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Run ShellCheck
       uses: ludeeus/action-shellcheck@master
       env:
@@ -29,7 +29,7 @@ jobs:
         wget -O- 'https://github.com/ztombol/bats-assert/archive/refs/tags/v0.3.0.tar.gz' | \
           sudo tar -xz --strip-components=1 -C /usr/lib/bats/bats-assert
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - uses: orbit-online/upkg@v0.14.0
     - name: Run tests
       run: bats .
