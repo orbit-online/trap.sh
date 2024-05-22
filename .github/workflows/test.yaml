@@ -2,8 +2,9 @@ name: Test
 
 on:
   push:
-    branches: [ '*' ]
-    tags: [ 'v*' ]
+    branches: ['*']
+    tags: ['!v*']
+  workflow_call: {}
 
 jobs:
   lint:
@@ -18,18 +19,23 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - name: Setup BATS
-      run: |
-        git clone --depth 1 --branch v1.10.0 https://github.com/bats-core/bats-core.git /tmp/bats
-        sudo /tmp/bats/install.sh /usr/local
-        rm -rf /tmp/bats
-        sudo mkdir -p /usr/lib/bats/bats-support /usr/lib/bats/bats-assert
-        wget -O- 'https://github.com/ztombol/bats-support/archive/refs/tags/v0.3.0.tar.gz' | \
-          sudo tar -xz --strip-components=1 -C /usr/lib/bats/bats-support
-        wget -O- 'https://github.com/ztombol/bats-assert/archive/refs/tags/v0.3.0.tar.gz' | \
-          sudo tar -xz --strip-components=1 -C /usr/lib/bats/bats-assert
+    - name: Install bats
+      uses: bats-core/bats-action@2.0.0
+      with:
+        support-path: ${{ github.workspace }}/lib/bats-support
+        assert-path: ${{ github.workspace }}/lib/bats-assert
     - name: Checkout
       uses: actions/checkout@v4
-    - uses: orbit-online/upkg@v0.14.0
+      with:
+        path: trap.sh
     - name: Run tests
-      run: bats .
+      run: bats --formatter tap13 . | tee results.tap
+      working-directory: trap.sh
+      env:
+        BATS_LIB_PATH: ${{ github.workspace }}/lib
+    - name: Generate test summary
+      uses: test-summary/action@v2
+      with:
+        paths: trap.sh/results.tap
+        show: "fail, skip"
+      if: always()

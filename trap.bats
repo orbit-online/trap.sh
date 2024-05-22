@@ -1,8 +1,7 @@
 #!/usr/bin/env bats
-# shellcheck disable=2030,2031
 
-load '/usr/lib/bats/bats-support/load'
-load '/usr/lib/bats/bats-assert/load'
+bats_load_library bats-support
+bats_load_library bats-assert
 
 setup_file() {
   bats_require_minimum_version 1.5.0
