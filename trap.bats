@@ -53,3 +53,11 @@ last command'
   )
   ")" 'USR2 signal received'
 }
+
+@test 'trap_prepend works' {
+  assert_equal "$(bash -ec "source $BATS_TEST_DIRNAME/trap.sh
+  trap_append \"echo 'should run last'\" USR2
+  trap_prepend \"echo 'should run first'\" USR2
+  kill -s USR2 \$BASHPID
+  ")" $'should run first\nshould run last'
+}
