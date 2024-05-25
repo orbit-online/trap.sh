@@ -50,8 +50,9 @@ trap_remove() {
   local pointer=$1
   if [[ $pointer = a* ]]; then
     pointer=${pointer#a}
+    unset "TRAP_APPEND_CMDS[pointer]"
   else
     pointer=${pointer#p}
+    unset "TRAP_PREPEND_CMDS[pointer]"
   fi
-  unset "TRAP_APPEND_CMDS[pointer]"
 }

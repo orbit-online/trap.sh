@@ -63,3 +63,13 @@ last command'
   kill -s USR2 \$BASHPID
   ")" $'should run first\nshould run second\nshould run third\nshould run last'
 }
+
+@test 'trap_remove removes from the right array' {
+  assert_equal "$(bash -ec "source $BATS_TEST_DIRNAME/trap.sh
+  trap_append \"echo 'should not run'\" USR2
+  trap_remove \$TRAP_POINTER
+  trap_prepend \"echo 'should not run'\" USR2
+  trap_remove \$TRAP_POINTER
+  kill -s USR2 \$BASHPID
+  ")" ''
+}
