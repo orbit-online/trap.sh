@@ -26,20 +26,22 @@ trap_run() {
 
 trap_prepend() {
   trap_init
-  local cmd=$1 signal=$2 trap_cmd
-  # shellcheck disable=SC2034
-  TRAP_POINTER=p${#TRAP_PREPEND_CMDS[@]}
+  local cmd=$1 signal=$2 keys
   TRAP_PREPEND_CMDS+=("$signal $cmd")
+  keys=("${!TRAP_PREPEND_CMDS[@]}")
+  # shellcheck disable=SC2034
+  TRAP_POINTER=p${keys[-1]}
   # shellcheck disable=SC2064
   trap "trap_run $signal" "$signal"
 }
 
 trap_append() {
   trap_init
-  local cmd=$1 signal=$2 trap_cmd
-  # shellcheck disable=SC2034
-  TRAP_POINTER=a${#TRAP_APPEND_CMDS[@]}
+  local cmd=$1 signal=$2 keys
   TRAP_APPEND_CMDS+=("$signal $cmd")
+  keys=("${!TRAP_APPEND_CMDS[@]}")
+  # shellcheck disable=SC2034
+  TRAP_POINTER=a${keys[-1]}
   # shellcheck disable=SC2064
   trap "trap_run $signal" "$signal"
 }
